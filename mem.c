@@ -103,7 +103,39 @@ size_t strSize(const char* str)
 	return i + 1;
 }
 
-void* _memAloc(long size, int lineNum, const char* function, const char* file)
+void* _memCLoc(size_t number_of_elements, size_t size_of_element, int lineNum, const char* function, const char* file)
+{
+	// there goes overflow protection
+	// TODO: get it back, somehow
+	size_t size = size_of_element * number_of_elements;
+
+	// well this is dumb
+	Cell* pnt = calloc(1, sizeof(Cell) + size);
+
+	pnt->prev = LL.prev;
+	pnt->next = &LL;
+	pnt->size = size;
+
+	pnt->line = lineNum;
+
+	pnt->function = malloc(strSize(function));
+	memcpy(pnt->function, function, strSize(function));
+
+	pnt->file = malloc(strSize(file));
+	memcpy(pnt->file, file, strSize(file));
+
+	LL.prev->next = pnt;
+	LL.prev = pnt;
+
+	total_memory_usage += size;
+	number_of_allocations++;
+
+	// pointer arithmatic
+	// jumps one Cell space
+	return pnt + 1;
+}
+
+void* _memAloc(size_t size, int lineNum, const char* function, const char* file)
 {
 	Cell* pnt = malloc(sizeof(Cell) + size);
 
@@ -118,6 +150,7 @@ void* _memAloc(long size, int lineNum, const char* function, const char* file)
 
 	pnt->file = malloc(strSize(file));
 	memcpy(pnt->file, file, strSize(file));
+
 	LL.prev->next = pnt;
 	LL.prev = pnt;
 

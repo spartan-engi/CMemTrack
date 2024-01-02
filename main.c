@@ -32,10 +32,10 @@ int main()
 	printf("mem:%ld\n", memGetUsage());
 	
 	things[0] = memAloc(10);	fillMem(things[0], 10);
-	things[1] = memAloc( 8);	fillMem(things[1],  8);
+	things[1] = memCLoc(8,1);	fillMem(things[1],  8);
 	things[2] = memAloc(16);	fillMem(things[2], 16);
 	things[3] = memAloc(30);	fillMem(things[3], 30);
-	things[4] = memAloc(64);	fillMem(things[4], 64);
+	things[4] = memCLoc(8,8);	fillMem(things[4], 64);
 
 	memRep();
 

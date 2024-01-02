@@ -1,3 +1,4 @@
+#include <stddef.h>
 
 	// pure C memory tracker
 	// inneficient and slow
@@ -22,9 +23,12 @@ void memDump();
 
 // use these macros to get automatic get (line number / function name / file name) errors and report
 #define memAloc(size)      _memAloc(size, __LINE__, __FUNCTION__, __FILE__)
+#define memCLoc(size, num) _memCLoc(size, num, __LINE__, __FUNCTION__, __FILE__)
 #define memFree(pointer)   _memFree(pointer, __LINE__, __FUNCTION__, __FILE__)
 
 // allocation wrapper
-void* _memAloc(long size, int lineNum, const char* function, const char* file);
+void* _memAloc(size_t size, int lineNum, const char* function, const char* file);
+// allocation wrapper2
+void* _memCLoc(size_t number_of_elements, size_t size_of_element, int lineNum, const char* function, const char* file);
 // de-allocation wrapper
 void  _memFree(void* pointer, int lineNum, const char* function, const char* file);
