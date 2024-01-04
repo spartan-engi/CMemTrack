@@ -29,18 +29,20 @@ void this_function_will_give_out_a_free_error_and_it_will_be_big()
 
 int main()
 {
-	void* things[5];
+	void* things[7];
 	
 	// call to initialize memory tracker
 	memStart();
 
 	printf("mem:%ld\n", memGetUsage());
 	
-	things[0] = memAloc(10);	fillMem(things[0], 10);
-	things[1] = memCLoc(8,1);	fillMem(things[1],  8);
-	things[2] = memAloc(16);	fillMem(things[2], 16);
-	things[3] = memAloc(30);	fillMem(things[3], 30);
-	things[4] = memCLoc(8,8);	fillMem(things[4], 64);
+	things[0] = memAloc(10);				fillMem(things[0], 10);
+	things[1] = memCLoc(8,1);				fillMem(things[1],  8);
+	things[2] = memCLoc(8,8);				fillMem(things[2], 64);
+	things[3] = memRLoc(NULL, 16);			fillMem(things[3], 16);
+	things[4] = memRLoc(things[2], 30);		fillMem(things[4], 30);
+	things[5] = memRLoc(&things[2], 30);	fillMem(things[5], 30);
+	things[6] = memRLoc(things[5], 16);		fillMem(things[6], 30);
 
 	memRep();
 

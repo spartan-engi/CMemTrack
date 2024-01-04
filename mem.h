@@ -10,6 +10,18 @@
 	// *on 64 bit systems
 	// 2 pointers, size_t, int, and 2 strings
 
+
+
+/* configurations */
+
+	// by default "0", reallocated pointers still count as 'responsability' of the original alloc,
+	// thus, by default realloc doesn't change the function/file origin information
+	#define ReallocCountsAsOrigin 0
+
+/* configurations */
+
+
+
 // call before anything, initializes linked list
 void memStart();
 // call to print a 'small' report
@@ -28,11 +40,14 @@ void memDump();
 // use these macros to get automatic get (line number / function name / file name) errors and report
 #define memAloc(size)      _memAloc(size, __LINE__, __FUNCTION__, __FILE__)
 #define memCLoc(size, num) _memCLoc(size, num, __LINE__, __FUNCTION__, __FILE__)
+#define memRLoc(pnt, size) _memRLoc(pnt, size, __LINE__, __FUNCTION__, __FILE__)
 #define memFree(pointer)   _memFree(pointer, __LINE__, __FUNCTION__, __FILE__)
 
 // allocation wrapper
 void* _memAloc(size_t size, int lineNum, const char* function, const char* file);
 // allocation wrapper2, doesn't have calloc's int overflow protection... never understood calloc either
 void* _memCLoc(size_t number_of_elements, size_t size_of_element, int lineNum, const char* function, const char* file);
+// re-allocation wrapper
+void* _memRLoc(void* pointer, size_t size, int lineNum, const char* function, const char* file);
 // de-allocation wrapper
 void  _memFree(void* pointer, int lineNum, const char* function, const char* file);
