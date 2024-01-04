@@ -18,6 +18,7 @@ struct Cell {
 };
 
 
+// memory tracker is simply implemented as a linked list holding all the pointers allocated
 Cell LL;
 long total_memory_usage;
 int number_of_allocations;
@@ -56,7 +57,7 @@ void memRep()
 }
 void memEnd()
 {
-	// yes, i will clean the rest while doing it
+	// yes, it will clean
 	Cell* temp = LL.next;
 	while(temp != &LL)
 	{
@@ -89,7 +90,7 @@ void memDump()
 		Cell* t = temp;
 		temp = temp->next;
 
-		printf("%zu bytes in function: %s at %s:%d\n", t->size, t->function, t->file, t->line);
+		printf("\t%zu bytes in function: %s at %s:%d\n", t->size, t->function, t->file, t->line);
 	}
 
 	return;

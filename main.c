@@ -1,3 +1,7 @@
+// example of usage of CMemTrack
+
+// simply include header
+// and start coding
 #include "mem.h"
 #include <stdio.h>
 
@@ -27,6 +31,7 @@ int main()
 {
 	void* things[5];
 	
+	// call to initialize memory tracker
 	memStart();
 
 	printf("mem:%ld\n", memGetUsage());
