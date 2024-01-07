@@ -1,5 +1,12 @@
 #include "mem.h"
 #include <stdlib.h>
+
+
+
+#if     CMemTrackACTIVE
+// if active, compile normally
+
+// most uncludes are only nescessary when active
 #include <stdio.h>
 #include <string.h>
 
@@ -250,3 +257,37 @@ void  _memFree(void* pointer, int lineNum, const char* function, const char* fil
 
 	return;
 }
+
+#else //CMemTrackACTIVE
+// if inactive, compile the simplest possible wrapper
+
+
+void memStart()		{return;}
+void memRep()		{return;}
+void memEnd()		{return;}
+long memGetUsage()	{return 0;}
+int  memGetAlocs()	{return 0;}
+void memDump()		{return;}
+
+void* _memCLoc(size_t number_of_elements, size_t size_of_element, int lineNum, const char* function, const char* file)
+{
+	return calloc(number_of_elements, size_of_element);
+}
+
+void* _memAloc(size_t size, int lineNum, const char* function, const char* file)
+{
+	return malloc(size);
+}
+
+void* _memRLoc(void* pointer, size_t size, int lineNum, const char* function, const char* file)
+{
+	return realloc(pointer, size);
+}
+
+void  _memFree(void* pointer, int lineNum, const char* function, const char* file)
+{
+	free(pointer);
+	return;
+}
+
+#endif//CMemTrackACTIVE

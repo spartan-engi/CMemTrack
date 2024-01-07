@@ -14,6 +14,15 @@
 
 /* configurations */
 
+	// by default "1", activates the whole project
+	// if deactivated, the wrappers will simply become calls to alloc/calloc/realloc
+	// use to deactivate all profiling without messing with your build tool much
+	// compiler will just optimise away the intermediary function calls
+	#ifndef CMemTrackACTIVE
+	#define CMemTrackACTIVE 1
+	// #define CMemTrackACTIVE 0
+	#endif
+
 	// by default "0", reallocated pointers still count as 'responsability' of the original alloc,
 	// thus, by default realloc doesn't change the function/file origin information
 	#ifndef ReallocCountsAsOrigin
