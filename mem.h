@@ -16,7 +16,7 @@
 
 	// by default "0", reallocated pointers still count as 'responsability' of the original alloc,
 	// thus, by default realloc doesn't change the function/file origin information
-	#ifdef ReallocCountsAsOrigin
+	#ifndef ReallocCountsAsOrigin
 	#define ReallocCountsAsOrigin 0
 	// #define ReallocCountsAsOrigin 1
 	#endif
