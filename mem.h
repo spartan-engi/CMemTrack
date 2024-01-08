@@ -33,6 +33,11 @@
 /* configurations */
 
 
+// name mangling can break stuff
+// so including thi in a c++ source files requires this
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 // call before anything, initializes linked list
 void memStart();
@@ -63,3 +68,8 @@ void* _memCLoc(size_t number_of_elements, size_t size_of_element, int lineNum, c
 void* _memRLoc(void* pointer, size_t size, int lineNum, const char* function, const char* file);
 // de-allocation wrapper
 void  _memFree(void* pointer, int lineNum, const char* function, const char* file);
+
+
+#if defined(__cplusplus)
+}
+#endif
