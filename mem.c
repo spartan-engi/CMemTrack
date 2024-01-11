@@ -172,6 +172,9 @@ void* _memAloc(size_t size, int lineNum, const char* function, const char* file)
 
 void* _memRLoc(void* pointer, size_t size, int lineNum, const char* function, const char* file)
 {
+	// realloc behaviour when fed NULL is same as malloc
+	if(pointer == NULL) return _memAloc(size, lineNum, function, file);
+
 	Cell* temp = LL.next;
 
 	Cell* p = pointer;
@@ -179,21 +182,18 @@ void* _memRLoc(void* pointer, size_t size, int lineNum, const char* function, co
 	// backtracks one Cell space
 	p = p  - 1;
 
+	// tries to find the pointer in allocations
 	while((temp != &LL) && (temp != p))	temp = temp->next;
 
 	// pointer not found
 	if(temp == &LL)
 	{
 		// non intended behaviour
-		if(pointer != NULL)
-		{
-			// shall presume this was an error and behave as if it was a NULL pointer
-			printf(
-			"\n[MEM][ERROR]: %s:%d: the function %s tried reallocating non alocated memory space different from NULL\n"
-			, file, lineNum, function);
-		}
+		// presumes this was an error and behave as if it was a NULL pointer
+		printf(
+		"\n[MEM][ERROR]: %s:%d: the function %s tried reallocating non alocated memory space different from NULL\n"
+		, file, lineNum, function);
 
-		// realloc behaviour when fed NULL is same as malloc
 		return _memAloc(size, lineNum, function, file);
 	}
 
