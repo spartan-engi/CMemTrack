@@ -202,6 +202,7 @@ void* _memRLoc(void* pointer, size_t size, int lineNum, const char* function, co
 
 	// in case p's address changed
 	p->next->prev = p;
+	p->prev->next = p;
 
 	// difference in sizes
 	total_memory_usage += size - p->size;
