@@ -227,6 +227,9 @@ void* _memRLoc(void* pointer, size_t size, int lineNum, const char* function, co
 
 void  _memFree(void* pointer, int lineNum, const char* function, const char* file)
 {
+	// free doesn't do anything if fed NULL pointer
+	if(pointer == NULL) return;
+
 	Cell* temp = LL.next;
 
 	Cell* p = pointer;
