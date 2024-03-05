@@ -198,6 +198,7 @@ void* _memRLoc(void* pointer, size_t size, int lineNum, const char* function, co
 	// realloc behaviour when fed NULL is same as malloc
 	if(pointer == NULL) return _memAloc(size, lineNum, function, file);
 
+	#if     CheckIfPointerValid
 	if(! memIsTracked(pointer))
 	{
 		// non intended behaviour
@@ -208,6 +209,7 @@ void* _memRLoc(void* pointer, size_t size, int lineNum, const char* function, co
 
 		return _memAloc(size, lineNum, function, file);
 	}
+	#endif//CheckIfPointerValid
 
 	Cell* p = pointer;
 	// pointer arithmatic
@@ -247,6 +249,7 @@ void  _memFree(void* pointer, int lineNum, const char* function, const char* fil
 	// free doesn't do anything if fed NULL pointer
 	if(pointer == NULL) return;
 
+	#if     CheckIfPointerValid
 	if(! memIsTracked(pointer))
 	{
 		printf("\n[MEM][ERROR]: %s:%d: the function %s tried freeing non alocated memory space\n",
@@ -254,6 +257,7 @@ void  _memFree(void* pointer, int lineNum, const char* function, const char* fil
 
 		return;
 	}
+	#endif//CheckIfPointerValid
 
 	Cell* p = pointer;
 	// pointer arithmatic

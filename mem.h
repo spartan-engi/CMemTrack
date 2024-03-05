@@ -31,6 +31,14 @@
 	// #define ReallocCountsAsOrigin 1
 	#endif
 
+	// by default "1", searches for the pointers on the linked list before free()/realloc()
+	// thus makes code slower, but easier to debug
+	// disabling this makes code down right crash instead of erroring out when an exception is encountered
+	#ifndef CheckIfPointerValid
+	#define CheckIfPointerValid 1
+	// #define CheckIfPointerValid 0
+	#endif
+
 /* configurations */
 
 
