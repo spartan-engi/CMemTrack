@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdbool.h>
 // gets size_t
 
 	// simply include this and start calling.
@@ -50,6 +51,10 @@ void memEnd();
 long memGetUsage();
 // difference of allocations and free operations
 int  memGetAlocs();
+
+// returns true if a pointer was alocated by CMemTracker
+// included by the sake of completness, used internally
+bool memIsTracked(void* pointer);
 
 // prints the size of all things allocated on the heap, can get big.
 void memDump();

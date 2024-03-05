@@ -86,6 +86,29 @@ int  memGetAlocs()
 	return number_of_allocations;
 }
 
+bool memIsTracked(void* pointer)
+{
+	// no such thing as a tracked null pointer
+	if(pointer == NULL) return false;
+
+	Cell* p = pointer;
+	// pointer arithmatic
+	// backtracks one Cell space
+	p = p  - 1;
+
+	Cell* temp = LL.next;
+	while(temp != &LL)
+	{
+		// found it!
+		if(temp == p) return true;
+
+		// next
+		temp = temp->next;
+	}
+
+	return false;
+}
+
 void memDump()
 {
 	printf("\n[MEM][INFO]: non freed memory locations:\n");
@@ -175,18 +198,7 @@ void* _memRLoc(void* pointer, size_t size, int lineNum, const char* function, co
 	// realloc behaviour when fed NULL is same as malloc
 	if(pointer == NULL) return _memAloc(size, lineNum, function, file);
 
-	Cell* temp = LL.next;
-
-	Cell* p = pointer;
-	// pointer arithmatic
-	// backtracks one Cell space
-	p = p  - 1;
-
-	// tries to find the pointer in allocations
-	while((temp != &LL) && (temp != p))	temp = temp->next;
-
-	// pointer not found
-	if(temp == &LL)
+	if(! memIsTracked(pointer))
 	{
 		// non intended behaviour
 		// presumes this was an error and behave as if it was a NULL pointer
@@ -196,6 +208,11 @@ void* _memRLoc(void* pointer, size_t size, int lineNum, const char* function, co
 
 		return _memAloc(size, lineNum, function, file);
 	}
+
+	Cell* p = pointer;
+	// pointer arithmatic
+	// backtracks one Cell space
+	p = p  - 1;
 
 	// get desired size, plus cell space
 	p = realloc(p, size + sizeof(Cell));
@@ -230,34 +247,28 @@ void  _memFree(void* pointer, int lineNum, const char* function, const char* fil
 	// free doesn't do anything if fed NULL pointer
 	if(pointer == NULL) return;
 
-	Cell* temp = LL.next;
+	if(! memIsTracked(pointer))
+	{
+		printf("\n[MEM][ERROR]: %s:%d: the function %s tried freeing non alocated memory space\n",
+			file, lineNum, function);
+
+		return;
+	}
 
 	Cell* p = pointer;
 	// pointer arithmatic
 	// backtracks one Cell space
 	p = p  - 1;
 
-	while(temp != &LL)
-	{
-		if(temp == p)
-		{
-			temp->prev->next = temp->next;
-			temp->next->prev = temp->prev;
+	p->prev->next = p->next;
+	p->next->prev = p->prev;
 
-			total_memory_usage -= temp->size;
-			number_of_allocations--;
+	total_memory_usage -= p->size;
+	number_of_allocations--;
 
-			free(temp->function);
-			free(temp->file);
-			free(temp);
-			return;
-		}
-
-		temp = temp->next;
-	}
-
-	printf("\n[MEM][ERROR]: %s:%d: the function %s tried freeing non alocated memory space\n",
-	 file, lineNum, function);
+	free(p->function);
+	free(p->file);
+	free(p);
 
 	return;
 }
@@ -271,6 +282,7 @@ void memRep()		{return;}
 void memEnd()		{return;}
 long memGetUsage()	{return 0;}
 int  memGetAlocs()	{return 0;}
+bool memIsTracked(void* pointer) {return false;}
 void memDump()		{return;}
 
 void* _memCLoc(size_t number_of_elements, size_t size_of_element, int lineNum, const char* function, const char* file)
