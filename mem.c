@@ -24,27 +24,23 @@ struct Cell {
 	// rest of the cell is the requested allocated memory
 };
 
+/* global variables */
 
 // memory tracker is simply implemented as a linked list holding all the pointers allocated
-Cell LL;
-long total_memory_usage;
-int number_of_allocations;
+// initializes Linked List without the need for a function call
+Cell LL = {
+	/*prev*/    &LL, 
+	/*size*/    0, 
+	/*next*/    &LL,
+	/*function*/0, 
+	/*file*/    0, 
+	/*line*/    0
+	};
+long total_memory_usage = 0;
+int number_of_allocations = 0;
 
+/* global variables */
 
-void memStart()
-{
-	total_memory_usage = 0;
-	number_of_allocations = 0;
-
-	LL.size = 0;
-	LL.prev = &LL;
-	LL.next = &LL;
-	LL.function = 0;
-	LL.file = 0;
-	LL.line = 0;
-
-	return;
-}
 void memRep()
 {
 	printf("\n=====================================================\n");

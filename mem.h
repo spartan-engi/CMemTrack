@@ -48,8 +48,6 @@
 extern "C" {
 #endif
 
-// call before anything, initializes linked list
-void memStart();
 // call to print a 'small' report
 void memRep();
 // call for deinitialization, not required

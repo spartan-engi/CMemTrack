@@ -31,9 +31,6 @@ int main()
 {
 	void* things[7];
 	
-	// call to initialize memory tracker
-	memStart();
-
 	printf("mem:%ld\n", memGetUsage());
 	
 	things[0] = memAloc(10);				fillMem(things[0], 10);
