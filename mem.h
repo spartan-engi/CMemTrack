@@ -63,6 +63,10 @@ int  memGetAlocs();
 // returns true if a pointer was alocated by CMemTracker
 // included by the sake of completness, used internally
 bool memIsTracked(void* pointer);
+// returns the size of memory that the pointer is pointing to
+// returns 0 if no pointer found. also returns 0 if pointer has size of 0 bytes.
+// one can allocate 0 bytes of memory... this sounds so wrong
+size_t memPointerSize(void* pointer);
 
 // prints the size of all things allocated on the heap, can get big.
 void memDump();

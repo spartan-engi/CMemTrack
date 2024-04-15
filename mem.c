@@ -109,6 +109,18 @@ bool memIsTracked(void* pointer)
 	return false;
 }
 
+size_t memPointerSize(void* pointer)
+{
+	if(! memIsTracked(pointer)) return 0;
+
+	Cell* p = pointer;
+	// pointer arithmatic
+	// backtracks one Cell space
+	p = p  - 1;
+
+	return p->size;
+}
+
 void memDump()
 {
 	printf("\n[MEM][INFO]: non freed memory locations:\n");
@@ -287,6 +299,7 @@ void memEnd()		{return;}
 long memGetUsage()	{return 0;}
 int  memGetAlocs()	{return 0;}
 bool memIsTracked(void* pointer) {return false;}
+size_t memPointerSize(void* pointer) {return 0;}
 void memDump()		{return;}
 
 void* _memCLoc(size_t number_of_elements, size_t size_of_element, int lineNum, const char* function, const char* file)
