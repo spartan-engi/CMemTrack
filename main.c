@@ -41,6 +41,16 @@ int main()
 	things[5] = memRLoc(&things[2], 30);	fillMem(things[5], 30);
 	things[6] = memRLoc(things[5], 16);		fillMem(things[6], 30);
 
+	if(!memIsInsideTracked(things[0]   )) return 3;
+	if(!memIsInsideTracked(things[0]+9 )) return 3;
+	if( memIsInsideTracked(things[0]+10)) return 3;
+
+	if( memCopy(NULL, things[0], 0)) return 3;
+	if( memCopy(things[0], NULL, 0)) return 3;
+	if( memCopy(NULL, NULL, 0))      return 3;
+
+	memCopy(things[0]+5, things[1]+5, 10);
+
 	memRep();
 
 	printf("mem:%ld\n", memGetUsage());

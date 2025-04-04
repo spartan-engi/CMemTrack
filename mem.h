@@ -65,15 +65,20 @@ bool memIsTracked(void* pointer);
 // returns 0 if no pointer found. also returns 0 if pointer has size of 0 bytes.
 // one can allocate 0 bytes of memory... this sounds so wrong
 size_t memPointerSize(void* pointer);
+// if the pointer is somewhere in the "domain" of a allocated piece of memory
+// returns the begining of the pointer it is in, else, returns zero
+// included by the sake of completness, used internally
+void* memIsInsideTracked(void* pointer);
 
 // prints the size of all things allocated on the heap, can get big.
 void memDump();
 
 // use these macros to get automatic get (line number / function name / file name) errors and report
-#define memAloc(size)      _memAloc(size, __LINE__, __FUNCTION__, __FILE__)
-#define memCLoc(size, num) _memCLoc(size, num, __LINE__, __FUNCTION__, __FILE__)
-#define memRLoc(pnt, size) _memRLoc(pnt, size, __LINE__, __FUNCTION__, __FILE__)
-#define memFree(pointer)   _memFree(pointer, __LINE__, __FUNCTION__, __FILE__)
+#define memAloc(size)           _memAloc(size, __LINE__, __FUNCTION__, __FILE__)
+#define memCLoc(size, num)      _memCLoc(size, num, __LINE__, __FUNCTION__, __FILE__)
+#define memRLoc(pnt, size)      _memRLoc(pnt, size, __LINE__, __FUNCTION__, __FILE__)
+#define memFree(pointer)        _memFree(pointer, __LINE__, __FUNCTION__, __FILE__)
+#define memCopy(dst, src, size) _memCopy(dst, src, size, __LINE__, __FUNCTION__, __FILE__)
 
 // allocation wrapper
 void* _memAloc(size_t size, int lineNum, const char* function, const char* file);
@@ -83,6 +88,8 @@ void* _memCLoc(size_t number_of_elements, size_t size_of_element, int lineNum, c
 void* _memRLoc(void* pointer, size_t size, int lineNum, const char* function, const char* file);
 // de-allocation wrapper
 void  _memFree(void* pointer, int lineNum, const char* function, const char* file);
+// copying wrapper
+void* _memCopy(void* destination, void* source, size_t size, int lineNum, const char* function, const char* file);
 
 
 #if defined(__cplusplus)

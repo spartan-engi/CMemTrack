@@ -117,6 +117,32 @@ size_t memPointerSize(void* pointer)
 	return p->size;
 }
 
+void* memIsInsideTracked(void* pointer)
+{
+	// no such thing as a tracked null pointer
+	if(pointer == NULL) return false;
+
+	Cell* p = pointer;
+	// pointer arithmatic
+	// backtracks one Cell space
+	// backtracks since the cell space isn't valid
+	p = p  - 1;
+
+	Cell* temp = LL.next;
+	while(temp != &LL)
+	{
+		// avoid pointer arithmatic
+		size_t temp_number = (size_t)temp;
+		// within the size of pointer temp
+		if((temp_number <= (size_t)p)&&((size_t)p < temp_number+temp->size)) return temp+1;
+
+		// next
+		temp = temp->next;
+	}
+
+	return 0;
+}
+
 void memDump()
 {
 	printf("\n[MEM][INFO]: non freed memory locations:\n");
@@ -285,6 +311,57 @@ void  _memFree(void* pointer, int lineNum, const char* function, const char* fil
 	return;
 }
 
+void* _memCopy(void* destination, void* source, size_t size, int lineNum, const char* function, const char* file)
+{
+	// undefined behaviour
+	if((destination == NULL)||(source == NULL))
+	{
+		printf("\n[MEM][ERROR]: %s:%d: the function %s tried copying to/from NULL memory\n",
+			file, lineNum, function);
+
+		return NULL;
+	}
+
+	size_t max_size = size;
+
+	// only checks for copies into/out of memory alocated by this lib
+	Cell* dst = memIsInsideTracked(destination);
+	if(dst)
+	{
+		// last byte of the buffer
+		size_t end_of_buffer = (size_t)dst + (dst - 1)->size;
+		// how far the write will go
+		size_t end_of_write = (size_t)destination + size;
+
+		// buffer overrun check
+		if(end_of_write > end_of_buffer){
+			printf("\n[MEM][ERROR]: %s:%d: in function %s, destination for copy %d bytes too small\n",
+				file, lineNum, function, end_of_write-end_of_buffer);
+			// clamp size of write
+			max_size = size - (end_of_write-end_of_buffer);
+		}
+	}
+	Cell* src = memIsInsideTracked(source);
+	if(src)
+	{
+		// last byte of the buffer
+		size_t end_of_buffer = (size_t)src + (src - 1)->size;
+		// how far the read will go
+		size_t end_of_read = (size_t)source + size;
+
+		// buffer overrun check
+		if(end_of_read > end_of_buffer){
+			printf("\n[MEM][ERROR]: %s:%d: in function %s, source of copy %d bytes too small\n",
+				file, lineNum, function, end_of_read-end_of_buffer);
+			// clamp size of read
+			size_t src_max_size = size - (end_of_read-end_of_buffer);
+			if(src_max_size < max_size) max_size = src_max_size;
+		}
+	}
+
+	return memcpy(destination, source, max_size);
+}
+
 #else //CMemTrackACTIVE
 // if inactive, compile the simplest possible wrapper
 
@@ -317,6 +394,11 @@ void  _memFree(void* pointer, int lineNum, const char* function, const char* fil
 {
 	free(pointer);
 	return;
+}
+
+void* _memCopy(void* destination, void* source, size_t size, int lineNum, const char* function, const char* file)
+{
+	return memcpy(destination, source, size);
 }
 
 #endif//CMemTrackACTIVE
